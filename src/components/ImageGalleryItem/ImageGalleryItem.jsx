@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Modal } from 'components/Modal/Modal';
 import css from 'components/Styles.module.css';
@@ -23,3 +24,9 @@ export function ImageGalleryItem({ image, tags, modalImage }) {
     </li>
   );
 }
+
+ImageGalleryItem.propTypes = {
+  image: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
+  modalImage: PropTypes.string.isRequired,
+};

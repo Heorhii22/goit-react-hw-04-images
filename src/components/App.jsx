@@ -23,7 +23,6 @@ export const App = () => {
     )
       .then(response => response.json())
       .then(data => {
-        console.log(data.hits.length);
         setPictures(prevState => [...prevState, ...data.hits]);
         if (!data.hits.length) {
           Notify.failure(`По запиту "${query}" нічого не знайдено.`);
@@ -43,8 +42,9 @@ export const App = () => {
   };
   return (
     <>
-      <Searchbar onSearchQuery={handleSearch} searchQuery={query} />
-      {loading ? <Spinner /> : <ImageGallery images={pictures} />}
+      <Searchbar onSearchQuery={handleSearch} />
+      {loading && <Spinner />}
+      <ImageGallery images={pictures} />
       {pictures.length / 12 === page && (
         <Button onLoadMoreImg={onLoadMoreImg} />
       )}

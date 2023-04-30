@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import css from './Modal.module.css';
@@ -34,3 +35,9 @@ export function Modal({ image, tags, toggleModal }) {
     modalRoot
   );
 }
+
+Modal.propTypes = {
+  image: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
+  toggleModal: PropTypes.func.isRequired,
+};

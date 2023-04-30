@@ -3,8 +3,9 @@ import { Notify } from 'notiflix';
 import { FiSearch } from 'react-icons/fi';
 import { IconContext } from 'react-icons';
 import css from 'components/Styles.module.css';
+import PropTypes from 'prop-types';
 
-export function Searchbar(props) {
+export function Searchbar({ onSearchQuery }) {
   const [query, setQuery] = useState('');
 
   const onHandleInput = e => {
@@ -13,7 +14,7 @@ export function Searchbar(props) {
 
   const onSearch = e => {
     e.preventDefault();
-    props.onSearchQuery(query);
+    onSearchQuery(query);
     if (query === '') {
       Notify.info('Введіть Ваш пошуковий запит!');
     }
@@ -40,8 +41,13 @@ export function Searchbar(props) {
           placeholder="Search images and photos"
           onChange={onHandleInput}
           value={query}
+          required
         />
       </form>
     </header>
   );
 }
+
+Searchbar.propTypes = {
+  onSearchQuery: PropTypes.func.isRequired,
+};

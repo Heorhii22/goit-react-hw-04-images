@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import { nanoid } from 'nanoid';
 import css from 'components/Styles.module.css';
@@ -19,3 +20,7 @@ export function ImageGallery({ images }) {
     </ul>
   );
 }
+
+ImageGallery.propTypes = {
+  images: PropTypes.array.isRequired,
+};
