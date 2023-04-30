@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal } from 'components/Modal/Modal';
 import css from 'components/Styles.module.css';
 
@@ -9,6 +9,11 @@ export function ImageGalleryItem({ image, tags, modalImage }) {
   const toggleModal = () => {
     setShowModal(prevState => !prevState);
   };
+
+  useEffect(() => {
+    const body = document.querySelector('body');
+    body.style.position = showModal ? 'fixed' : '';
+  }, [showModal]);
 
   return (
     <li className={css.ImageGalleryItem}>
