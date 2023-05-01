@@ -1,26 +1,30 @@
 import PropTypes from 'prop-types';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
-import { nanoid } from 'nanoid';
-import css from 'components/Styles.module.css';
+import css from './ImageGallery.module.css';
 
-export function ImageGallery({ images }) {
+export const ImageGallery = ({ images }) => {
   return (
-    <ul className={css.ImageGallery}>
+    <ul className={css.imageGallery}>
       {images.length > 0 &&
-        images.map(image => {
-          return (
-            <ImageGalleryItem
-              image={image.webformatURL}
-              key={nanoid()}
-              tags={image.tags}
-              modalImage={image.largeImageURL}
-            />
-          );
-        })}
+        images.map(image => (
+          <ImageGalleryItem
+            key={image.id}
+            webformatURL={image.webformatURL}
+            tags={image.tags}
+            largeImageURL={image.largeImageURL}
+          />
+        ))}
     </ul>
   );
-}
+};
 
 ImageGallery.propTypes = {
-  images: PropTypes.array.isRequired,
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      largeImageURL: PropTypes.string.isRequired,
+      tags: PropTypes.string.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+    })
+  ),
 };

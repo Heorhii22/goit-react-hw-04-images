@@ -1,53 +1,84 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Searchbar } from './Searchbar/Searchbar';
+import { fetchPhoto } from 'service/picturesAPI';
 import { ImageGallery } from './ImageGallery/ImageGallery';
+import { Loader } from './Loader/Loader';
 import { Button } from './Button/Button';
-import Spinner from './Loader/Loader';
-import { Notify } from 'notiflix';
+import css from './App.module.css';
 
 export const App = () => {
   const [query, setQuery] = useState('');
-  const [pictures, setPictures] = useState([]);
+  const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isVissible, setIsVissible] = useState(false);
+  const [, setError] = useState(false);
 
   useEffect(() => {
     if (query === '') {
       return;
     }
 
-    setLoading(true);
+    const getPictures = async () => {
+      setIsLoading(true);
 
-    fetch(
-      `https://pixabay.com/api/?q=${query}&page=${page}&key=34193099-075808226620db616b3773f0f&image_type=photo&orientation=horizontal&per_page=12`
-    )
-      .then(response => response.json())
-      .then(data => {
-        setPictures(prevState => [...prevState, ...data.hits]);
-        if (!data.hits.length) {
-          Notify.failure(`По запиту "${query}" нічого не знайдено.`);
+      try {
+        const { hits, totalHits } = await fetchPhoto(query, page);
+
+        if (hits.length === 0) {
+          setIsVissible(false);
+          return toast.error(
+            'Sorry, there are no images matching your search query. Please try again.'
+          );
         }
-        setLoading(false);
-      });
+
+        if (page > Math.ceil(totalHits / 12)) {
+          setIsVissible(false);
+          return toast.warn(
+            "We're sorry, but you've reached the end of search results."
+          );
+        }
+
+        setImages(prevState => [...prevState, ...hits]);
+        setIsVissible(page < Math.ceil(totalHits / 12));
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getPictures();
   }, [query, page]);
 
-  const handleSearch = query => {
-    setQuery(query);
+  const handleFormSubmit = picture => {
+    setQuery(picture);
+    setImages([]);
     setPage(1);
-    setPictures([]);
+    setError(false);
   };
 
-  const onLoadMoreImg = () => {
+  const loadMoreButton = () => {
     setPage(prevState => prevState + 1);
   };
+
   return (
-    <>
-      <Searchbar onSearchQuery={handleSearch} />
-      {loading && <Spinner />}
-      <ImageGallery images={pictures} />
-      {pictures.length / 12 === page && (
-        <Button onLoadMoreImg={onLoadMoreImg} />
+    <div className={css.container}>
+      <Searchbar onSubmit={handleFormSubmit} />
+
+      {isLoading && <Loader />}
+
+      <ImageGallery images={images} />
+
+      {isVissible && (
+        <Button disabled={isLoading} onLoadMoreButton={loadMoreButton}>
+          {isLoading ? 'Loading...' : 'Load more'}
+        </Button>
       )}
-    </>
+
+      <ToastContainer autoClose={3000} />
+    </div>
   );
 };

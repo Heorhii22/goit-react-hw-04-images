@@ -1,15 +1,15 @@
-import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import PropTypes from 'prop-types';
 import css from './Modal.module.css';
 
-export function Modal({ image, tags, toggleModal }) {
-  const modalRoot = document.querySelector('#modalRoot');
+const modalRoot = document.querySelector('#modal-root');
 
+export const Modal = ({ largeImageURL, tags, onClose }) => {
   useEffect(() => {
     const handleKeyDown = event => {
       if (event.code === 'Escape') {
-        toggleModal();
+        onClose();
       }
     };
 
@@ -18,26 +18,25 @@ export function Modal({ image, tags, toggleModal }) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [toggleModal]);
+  }, [onClose]);
 
   const handleBackDropClick = event => {
     if (event.target === event.currentTarget) {
-      toggleModal();
+      onClose();
     }
   };
 
   return createPortal(
     <div className={css.overlay} onClick={handleBackDropClick}>
       <div className={css.modal}>
-        <img src={image} alt={tags} className={css.modalImage} />
+        <img src={largeImageURL} alt={tags} />
       </div>
     </div>,
     modalRoot
   );
-}
+};
 
 Modal.propTypes = {
-  image: PropTypes.string.isRequired,
+  largeImageURL: PropTypes.string.isRequired,
   tags: PropTypes.string.isRequired,
-  toggleModal: PropTypes.func.isRequired,
 };

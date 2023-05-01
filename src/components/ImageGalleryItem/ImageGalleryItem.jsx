@@ -1,37 +1,36 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
-import { Modal } from 'components/Modal/Modal';
-import css from 'components/Styles.module.css';
+import { Modal } from '../Modal/Modal';
+import css from './ImageGalleryItem.module.css';
 
-export function ImageGalleryItem({ image, tags, modalImage }) {
-  const [showModal, setShowModal] = useState(false);
+export const ImageGalleryItem = ({ webformatURL, tags, largeImageURL }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const toggleModal = () => {
-    setShowModal(prevState => !prevState);
+  const openModal = () => {
+    setIsModalOpen(true);
   };
 
-  useEffect(() => {
-    const body = document.querySelector('body');
-    body.style.position = showModal ? 'fixed' : '';
-  }, [showModal]);
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
-    <li className={css.ImageGalleryItem}>
+    <li className={css.imageGalleryItem}>
       <img
-        src={image}
+        src={webformatURL}
         alt={tags}
-        onClick={toggleModal}
-        className={css.ImageGalleryItemImage}
+        className={css.imageGalleryItem__image}
+        onClick={openModal}
       />
-      {showModal && (
-        <Modal tags={tags} image={modalImage} toggleModal={toggleModal} />
+      {isModalOpen && (
+        <Modal largeImageURL={largeImageURL} tags={tags} onClose={closeModal} />
       )}
     </li>
   );
-}
+};
 
 ImageGalleryItem.propTypes = {
-  image: PropTypes.string.isRequired,
+  largeImageURL: PropTypes.string.isRequired,
   tags: PropTypes.string.isRequired,
-  modalImage: PropTypes.string.isRequired,
+  webformatURL: PropTypes.string.isRequired,
 };
